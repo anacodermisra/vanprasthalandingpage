@@ -1,0 +1,21 @@
+name: Keep Render Warm 24/7
+
+on:
+  schedule:
+    # Run every 5 minutes (Render sleeps after 15 minutes of inactivity)
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping-keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Landing Page & Health Check
+        run: |
+          echo "Pinging Vanprastha Retreat on Render..."
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://vanprastha-retreat.onrender.com/api/health)
+          echo "Health endpoint HTTP status: $HTTP_STATUS"
+          
+          # Also warm up the main landing page
+          curl -s -o /dev/null -w "%{http_code}" https://vanprastha-retreat.onrender.com/
+          echo "Keepalive ping completed successfully at $(date -u)"
