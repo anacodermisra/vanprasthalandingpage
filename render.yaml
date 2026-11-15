@@ -15,4 +15,3 @@ services:
         sync: false
       - key: NEXT_PUBLIC_WHATSAPP_PHONE
         value: "919650102777"
-    envGroup: prod
