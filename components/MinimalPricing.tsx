@@ -20,6 +20,11 @@ export default function MinimalPricing({ onSelectCohort }: MinimalPricingProps) 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [submittedData, setSubmittedData] = useState<{
+    leadId?: string;
+    userWhatsAppLink?: string;
+    coordinatorWhatsAppAlert?: string;
+  } | null>(null);
 
   useEffect(() => {
     onSelectCohort(selectedCohort);
@@ -53,7 +58,13 @@ export default function MinimalPricing({ onSelectCohort }: MinimalPricingProps) 
         throw new Error(data.error || "Submission failed");
       }
 
+      setSubmittedData(data);
       setSuccess(true);
+
+      // Open WhatsApp directly for instant notification
+      if (data.userWhatsAppLink) {
+        window.open(data.userWhatsAppLink, "_blank");
+      }
     } catch (err: any) {
       setError(err.message || "Please try again or WhatsApp us directly.");
     } finally {
@@ -124,6 +135,19 @@ export default function MinimalPricing({ onSelectCohort }: MinimalPricingProps) 
                 <p className="text-ink-secondary mb-6">
                   Our Retreat Coordinator will connect with you shortly via WhatsApp.
                 </p>
+
+                {submittedData?.userWhatsAppLink && (
+                  <div className="mb-6">
+                    <a
+                      href={submittedData.userWhatsAppLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-waGreen text-white font-semibold text-sm hover:bg-waGreen-hover shadow-md transition-all"
+                    >
+                      <span>Open WhatsApp Chat Directly</span>
+                    </a>
+                  </div>
+                )}
                 <button
                   onClick={() => {
                     setShowForm(false);
