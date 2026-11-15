@@ -46,6 +46,8 @@ export async function getLeads(): Promise<RetreatLead[]> {
 
   return [];
 }
+
+export interface RetreatLead {
   id?: string;
   created_at?: string;
   full_name: string;
