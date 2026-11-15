@@ -16,7 +16,36 @@ export const supabase = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseKey)
   : null;
 
-export interface RetreatLead {
+export async function getLeads(): Promise<RetreatLead[]> {
+  // 1. Try Supabase
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("retreat_leads")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (!error && data) {
+        return data as RetreatLead[];
+      }
+    } catch (err: any) {
+      console.error("Supabase fetch error:", err.message);
+    }
+  }
+
+  // 2. Fallback to local store
+  try {
+    const filePath = path.join(process.cwd(), "data", "leads.json");
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, "utf-8");
+      return JSON.parse(content);
+    }
+  } catch (err: any) {
+    console.error("Local leads read error:", err.message);
+  }
+
+  return [];
+}
   id?: string;
   created_at?: string;
   full_name: string;

@@ -1,6 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import { saveLead, RetreatLead } from "@/lib/supabase";
+import { saveLead, getLeads, RetreatLead } from "@/lib/supabase";
 import { sendLeadWhatsAppNotification, buildWhatsAppLink } from "@/lib/whatsapp";
+
+export async function GET(request: NextRequest) {
+  const authHeader = request.headers.get("authorization");
+  const url = new URL(request.url);
+  const key = url.searchParams.get("key") || authHeader?.replace("Bearer ", "");
+  const masterKey = process.env.ADMIN_SECRET_KEY || "vanprastha2026";
+
+  if (key !== masterKey) {
+    return NextResponse.json(
+      { error: "Unauthorized. Pass ?key=YOUR_SECRET_KEY" },
+      { status: 401 }
+    );
+  }
+
+  const leads = await getLeads();
+
+  return NextResponse.json({
+    success: true,
+    count: leads.length,
+    leads,
+  });
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -113,12 +135,17 @@ export async function POST(request: NextRequest) {
       companyName: leadRecord.company_name,
     });
 
+    const coordinatorNotificationLink = `https://wa.me/919310312404?text=${encodeURIComponent(
+      `🚨 New Lead Received:\nName: ${leadRecord.full_name}\nPhone: ${leadRecord.whatsapp_phone}\nEmail: ${leadRecord.work_email}\nCompany: ${leadRecord.company_name || 'N/A'}\nCohort: ${leadRecord.preferred_cohort}\nRoom: ${leadRecord.room_preference}`
+    )}`;
+
     return NextResponse.json({
       success: true,
       leadId: result.leadId,
       source: result.source,
       message: "Application received. Our Retreat Coordinator will connect with you shortly.",
       userWhatsAppLink,
+      coordinatorWhatsAppAlert: coordinatorNotificationLink,
     });
   } catch (error: any) {
     console.error("API error:", error);

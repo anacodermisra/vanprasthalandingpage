@@ -3,9 +3,14 @@
  * Allows direct conversation with the retreat team at Vanprastha Resorts, Dunagiri.
  */
 
-// Official Vanprastha Retreat Desk WhatsApp Number
-export const RETREAT_WHATSAPP_NUMBER =
-  process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "919650102777";
+// Official Vanprastha Retreat Desk WhatsApp Numbers for Leads
+export const RETREAT_WHATSAPP_NUMBERS = [
+  process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "919650102777",
+  "919310312404", // Anand Misra
+];
+
+// Primary desk number for visitor direct chats
+export const RETREAT_WHATSAPP_NUMBER = RETREAT_WHATSAPP_NUMBERS[0];
 
 /**
  * Builds a direct WhatsApp chat link with pre-filled message
@@ -71,23 +76,24 @@ export async function sendLeadWhatsAppNotification(lead: {
     }
   }
 
-  if (cloudApiToken && phoneId && RETREAT_WHATSAPP_NUMBER) {
+  if (cloudApiToken && phoneId) {
     try {
-      await fetch(
-        `https://graph.facebook.com/v19.0/${phoneId}/messages`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${cloudApiToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            messaging_product: "whatsapp",
-            to: RETREAT_WHATSAPP_NUMBER,
-            type: "text",
-            text: { body: alertText },
-          }),
-        }
+      await Promise.all(
+        RETREAT_WHATSAPP_NUMBERS.map((recipientNumber) =>
+          fetch(`https://graph.facebook.com/v19.0/${phoneId}/messages`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${cloudApiToken}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              messaging_product: "whatsapp",
+              to: recipientNumber,
+              type: "text",
+              text: { body: alertText },
+            }),
+          })
+        )
       );
       return true;
     } catch (err) {
