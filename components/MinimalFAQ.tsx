@@ -8,7 +8,7 @@ export default function MinimalFAQ() {
   const waLink = buildWhatsAppLink();
 
   return (
-    <section className="py-20 bg-forest-dark text-canvas">
+    <section id="faq" className="py-20 bg-forest-dark text-canvas">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="font-serif text-3xl sm:text-4xl font-bold mb-6">
           Have Questions?

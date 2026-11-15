@@ -135,7 +135,11 @@ export default function Footer() {
               The Sanctuary
             </a>
             <span>·</span>
-            <a href="#pricing" className="hover:text-gold transition-colors">
+            <a href="#facilitator" className="hover:text-gold transition-colors">
+              The Facilitator
+            </a>
+            <span>·</span>
+            <a href="#apply" className="hover:text-gold transition-colors">
               Cohorts &amp; Pricing
             </a>
             <span>·</span>

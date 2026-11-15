@@ -19,11 +19,9 @@ export default function Navbar() {
 
   const navLinks = [
     { label: "The Sanctuary", href: "#sanctuary" },
-    { label: "5 Pillars", href: "#pillars" },
-    { label: "60-Hour Journey", href: "#journey" },
-    { label: "The Guide", href: "#facilitator" },
-    { label: "Cohorts & Pricing", href: "#pricing" },
-    { label: "Logistics & FAQ", href: "#faq" },
+    { label: "The Facilitator", href: "#facilitator" },
+    { label: "Cohorts & Pricing", href: "#apply" },
+    { label: "FAQ", href: "#faq" },
   ];
 
   const waLink = buildWhatsAppLink();

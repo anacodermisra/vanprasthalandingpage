@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function MinimalProperty() {
   return (
-    <section className="py-20 bg-forest-dark text-canvas">
+    <section id="sanctuary" className="py-20 bg-forest-dark text-canvas">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <span className="text-xs font-bold uppercase tracking-wider text-gold font-sans">

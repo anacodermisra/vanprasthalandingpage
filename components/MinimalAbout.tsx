@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function MinimalAbout() {
   return (
-    <section className="py-20 bg-canvas text-forest-dark">
+    <section id="about" className="py-20 bg-canvas text-forest-dark">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <div>

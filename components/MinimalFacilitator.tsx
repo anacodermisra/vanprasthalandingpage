@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function MinimalFacilitator() {
   return (
-    <section className="py-20 bg-canvas-subtle text-forest-dark">
+    <section id="facilitator" className="py-20 bg-canvas-subtle text-forest-dark">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
           <div className="md:col-span-5 relative rounded-2xl overflow-hidden aspect-[3/4]">

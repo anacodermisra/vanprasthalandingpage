@@ -49,7 +49,7 @@ export default function FacilitatorSection() {
           <div className="lg:col-span-7 space-y-6">
             <div>
               <span className="text-xs font-bold tracking-[0.22em] uppercase text-gold block mb-2 font-sans">
-                The Guide
+                The Facilitator
               </span>
               <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-semibold text-forest-dark leading-tight mb-2">
                 CA (Dr.) Alok Misra
