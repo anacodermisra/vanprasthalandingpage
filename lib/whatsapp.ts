@@ -99,6 +99,8 @@ export async function sendLeadWhatsAppNotification(lead: {
           const data = await res.json();
           if (!res.ok) {
             console.warn(`WhatsApp dispatch to ${recipientNumber} returned ${res.status}:`, data);
+          } else {
+            console.log(`✅ WhatsApp dispatch to ${recipientNumber} succeeded:`, data?.messages?.[0]?.id);
           }
           return data;
         })
