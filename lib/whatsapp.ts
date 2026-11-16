@@ -80,6 +80,49 @@ export async function sendLeadWhatsAppNotification(lead: {
     try {
       const results = await Promise.allSettled(
         RETREAT_WHATSAPP_NUMBERS.map(async (recipientNumber) => {
+          // 1. Try sending the official utility template first (bypasses 24-hr restriction for 24/7 delivery)
+          try {
+            const templateRes = await fetch(
+              `https://graph.facebook.com/v22.0/${phoneId}/messages`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${cloudApiToken}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  messaging_product: "whatsapp",
+                  to: recipientNumber,
+                  type: "template",
+                  template: {
+                    name: "vanprastha_retreat_lead_alert",
+                    language: { code: "en_US" },
+                    components: [
+                      {
+                        type: "body",
+                        parameters: [
+                          { type: "text", text: lead.name || "Inquirer" },
+                          { type: "text", text: lead.phone || "N/A" },
+                          { type: "text", text: lead.email || "N/A" },
+                          { type: "text", text: lead.company || "Individual Leader" },
+                        ],
+                      },
+                    ],
+                  },
+                }),
+              }
+            );
+
+            const templateData = await templateRes.json();
+            if (templateRes.ok) {
+              console.log(`✅ WhatsApp template dispatch to ${recipientNumber} succeeded:`, templateData?.messages?.[0]?.id);
+              return templateData;
+            }
+          } catch (tErr) {
+            console.warn("Template attempt error, falling back to text:", tErr);
+          }
+
+          // 2. Fallback to freeform text (works when 24-hour service window is open)
           const res = await fetch(
             `https://graph.facebook.com/v22.0/${phoneId}/messages`,
             {

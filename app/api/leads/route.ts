@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { saveLead, getLeads, RetreatLead } from "@/lib/supabase";
+import { saveLead, getLeads, deleteLead, RetreatLead } from "@/lib/supabase";
 import { sendLeadWhatsAppNotification, buildWhatsAppLink } from "@/lib/whatsapp";
 
 export async function GET(request: NextRequest) {
@@ -22,6 +22,28 @@ export async function GET(request: NextRequest) {
     count: leads.length,
     leads,
   });
+}
+
+export async function DELETE(request: NextRequest) {
+  const authHeader = request.headers.get("authorization");
+  const url = new URL(request.url);
+  const key = url.searchParams.get("key") || authHeader?.replace("Bearer ", "");
+  const masterKey = process.env.ADMIN_SECRET_KEY || "vanprastha2026";
+
+  if (key !== masterKey) {
+    return NextResponse.json(
+      { error: "Unauthorized. Pass ?key=YOUR_SECRET_KEY" },
+      { status: 401 }
+    );
+  }
+
+  const id = url.searchParams.get("id");
+  if (!id) {
+    return NextResponse.json({ error: "Missing ?id= parameter" }, { status: 400 });
+  }
+
+  await deleteLead(id);
+  return NextResponse.json({ success: true, deletedId: id });
 }
 
 export async function POST(request: NextRequest) {

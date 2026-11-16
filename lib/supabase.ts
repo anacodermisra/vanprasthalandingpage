@@ -141,3 +141,30 @@ export async function saveLead(lead: RetreatLead): Promise<{
     };
   }
 }
+
+export async function deleteLead(id: string): Promise<boolean> {
+  if (supabase) {
+    try {
+      await supabase.from("retreat_leads").delete().eq("id", id);
+    } catch (err: any) {
+      console.error("Supabase delete error:", err.message);
+    }
+  }
+
+  try {
+    const filePath = path.join(process.cwd(), "data", "leads.json");
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, "utf-8");
+      let leads = JSON.parse(content);
+      if (Array.isArray(leads)) {
+        leads = leads.filter((l: any) => l.id !== id);
+        fs.writeFileSync(filePath, JSON.stringify(leads, null, 2), "utf-8");
+        return true;
+      }
+    }
+  } catch (err: any) {
+    console.error("Local leads delete error:", err.message);
+  }
+
+  return true;
+}
