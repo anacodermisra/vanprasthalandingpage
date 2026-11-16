@@ -78,24 +78,32 @@ export async function sendLeadWhatsAppNotification(lead: {
 
   if (cloudApiToken && phoneId) {
     try {
-      await Promise.all(
-        RETREAT_WHATSAPP_NUMBERS.map((recipientNumber) =>
-          fetch(`https://graph.facebook.com/v19.0/${phoneId}/messages`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${cloudApiToken}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              messaging_product: "whatsapp",
-              to: recipientNumber,
-              type: "text",
-              text: { body: alertText },
-            }),
-          })
-        )
+      const results = await Promise.allSettled(
+        RETREAT_WHATSAPP_NUMBERS.map(async (recipientNumber) => {
+          const res = await fetch(
+            `https://graph.facebook.com/v22.0/${phoneId}/messages`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${cloudApiToken}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                messaging_product: "whatsapp",
+                to: recipientNumber,
+                type: "text",
+                text: { body: alertText },
+              }),
+            }
+          );
+          const data = await res.json();
+          if (!res.ok) {
+            console.warn(`WhatsApp dispatch to ${recipientNumber} returned ${res.status}:`, data);
+          }
+          return data;
+        })
       );
-      return true;
+      return results.some((r) => r.status === "fulfilled");
     } catch (err) {
       console.error("WhatsApp Cloud API dispatch failed:", err);
     }
