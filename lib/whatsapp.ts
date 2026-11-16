@@ -101,7 +101,7 @@ export async function sendLeadWhatsAppNotification(lead: {
                       {
                         type: "body",
                         parameters: [
-                          { type: "text", text: lead.name || "Inquirer" },
+                          { type: "text", text: lead.fullName || "Inquirer" },
                           { type: "text", text: lead.phone || "N/A" },
                           { type: "text", text: lead.email || "N/A" },
                           { type: "text", text: lead.company || "Individual Leader" },
