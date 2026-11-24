@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { saveLead, getLeads, deleteLead, RetreatLead } from "@/lib/supabase";
 import { sendLeadWhatsAppNotification, buildWhatsAppLink } from "@/lib/whatsapp";
+import { saveLeadToGoogleSheet } from "@/lib/googleSheets";
 
 // ─── Security helpers ────────────────────────────────────────────────────────
 
@@ -191,21 +192,42 @@ export async function POST(request: NextRequest) {
       ));
     }
 
-    // Trigger WhatsApp notification asynchronously
-    sendLeadWhatsAppNotification({
-      fullName: leadRecord.full_name,
-      phone: leadRecord.whatsapp_phone,
-      email: leadRecord.work_email,
-      company: leadRecord.company_name,
-      cohort:
-        leadRecord.preferred_cohort === "batch_1"
-          ? "Batch 1 (11–13 Dec 2026)"
-          : leadRecord.preferred_cohort === "batch_2"
-          ? "Batch 2 (25–27 Dec 2026)"
-          : "Flexible Cohort",
-      bookingType: leadRecord.booking_type,
-      teamSize: leadRecord.team_size,
-    }).catch((err) => console.error("Notification trigger error:", err));
+    // Trigger notifications & sync in parallel (guaranteed completion before response closes)
+    await Promise.allSettled([
+      sendLeadWhatsAppNotification({
+        fullName: leadRecord.full_name,
+        phone: leadRecord.whatsapp_phone,
+        email: leadRecord.work_email,
+        company: leadRecord.company_name,
+        cohort:
+          leadRecord.preferred_cohort === "batch_1"
+            ? "Batch 1 (11–13 Dec 2026)"
+            : leadRecord.preferred_cohort === "batch_2"
+            ? "Batch 2 (25–27 Dec 2026)"
+            : "Flexible Cohort",
+        bookingType: leadRecord.booking_type,
+        teamSize: leadRecord.team_size,
+      }),
+      saveLeadToGoogleSheet({
+        fullName: leadRecord.full_name,
+        whatsappPhone: leadRecord.whatsapp_phone,
+        workEmail: leadRecord.work_email,
+        companyName: leadRecord.company_name,
+        designation: leadRecord.designation,
+        bookingType: leadRecord.booking_type,
+        teamSize: leadRecord.team_size,
+        preferredCohort:
+          leadRecord.preferred_cohort === "batch_1"
+            ? "Batch 1 (11–13 Dec 2026)"
+            : leadRecord.preferred_cohort === "batch_2"
+            ? "Batch 2 (25–27 Dec 2026)"
+            : "Flexible Cohort",
+        roomPreference: leadRecord.room_preference,
+        notes: leadRecord.notes,
+        utmSource: leadRecord.utm_source,
+        leadId: result.leadId,
+      }),
+    ]);
 
     // Personalized WhatsApp link
     const userWhatsAppLink = buildWhatsAppLink({
