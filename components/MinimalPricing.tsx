@@ -84,7 +84,8 @@ export default function MinimalPricing({ onSelectCohort }: MinimalPricingProps) 
           </h2>
           <p className="text-ink-secondary mt-4 max-w-2xl mx-auto">
             Select your preferred cohort and room type. All prices include accommodation,
-            meals, sessions, and coordination.
+            nourishing Himalayan meals, and all retreat sessions.
+            Travel to and from the resort is separate.
           </p>
         </div>
 
@@ -273,9 +274,9 @@ export default function MinimalPricing({ onSelectCohort }: MinimalPricingProps) 
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { id: "double", title: "Double Sharing", price: "₹24,000", features: ["2 Nights accommodation", "All meals included", "Breathwork sessions", "Kathgodam transfers"] },
-              { id: "triple", title: "Triple Sharing", price: "₹22,000", features: ["2 Nights accommodation", "All meals included", "Breathwork sessions", "Kathgodam transfers"] },
-              { id: "quad", title: "Quad Sharing", price: "₹20,000", features: ["2 Nights accommodation", "All meals included", "Breathwork sessions", "Kathgodam transfers"] },
+              { id: "double", title: "Double Sharing", price: "₹24,000", features: ["2 Nights accommodation", "All Himalayan meals included", "Breathwork & focus sessions", "All retreat activities"] },
+              { id: "triple", title: "Triple Sharing", price: "₹22,000", features: ["2 Nights accommodation", "All Himalayan meals included", "Breathwork & focus sessions", "All retreat activities"] },
+              { id: "quad", title: "Quad Sharing", price: "₹20,000", features: ["2 Nights accommodation", "All Himalayan meals included", "Breathwork & focus sessions", "All retreat activities"] },
             ].map((pkg) => (
               <div key={pkg.id} className="rounded-3xl p-6 bg-white border border-gold-border shadow-sm hover:border-gold transition-all">
                 <h3 className="font-serif text-2xl font-bold text-forest-dark mb-2">{pkg.title}</h3>

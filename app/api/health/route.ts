@@ -2,6 +2,12 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
+const SECURITY_HEADERS = {
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "Cache-Control": "no-store, max-age=0",
+};
+
 export async function GET() {
   return NextResponse.json(
     {
@@ -12,9 +18,7 @@ export async function GET() {
     },
     {
       status: 200,
-      headers: {
-        "Cache-Control": "no-store, max-age=0",
-      },
+      headers: SECURITY_HEADERS,
     }
   );
 }
@@ -22,8 +26,6 @@ export async function GET() {
 export async function HEAD() {
   return new Response(null, {
     status: 200,
-    headers: {
-      "Cache-Control": "no-store, max-age=0",
-    },
+    headers: SECURITY_HEADERS,
   });
 }
